@@ -18,13 +18,13 @@ jobs:
         creds: ${{ secrets.SERVICE_PRINCIPAL_CREDS }}
 
     - name: Delete existing blobs
-      uses: azure/cli@v1.0.4
+      uses: azure/CLI@v1
       with:
         inlineScript: |
           az storage blob delete-batch --account-name ${{ secrets.STORAGE_ACCOUNT_NAME }} --auth-mode login --source ${{ secrets.STORAGE_CONTAINER_NAME }}
 
     - name: Upload new blobs
-      uses: azure/cli@v1.0.4
+      uses: azure/CLI@v1
       with:
         inlineScript: |
           az storage blob upload-batch --account-name ${{ secrets.STORAGE_ACCOUNT_NAME }} --auth-mode login --source Content --destination ${{ secrets.STORAGE_CONTAINER_NAME }}
