@@ -16,14 +16,28 @@ spec:
       nodeSelector:
         kubernetes.io/os: linux
       containers:
-      - name: nginx
-        image: nginx:latest
-        resources:
-          requests:
-            cpu: "100m"
-            memory: "256Mi"
-          limits:
-            cpu: "100m"
-            memory: "256Mi"
-        ports:
-        - containerPort: 80
+        - name: nginx
+          image: nginx:latest
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              cpu: "100m"
+              memory: "256Mi"
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: persistent-storage
+              mountPath: /usr/share/nginx/html  # Specify the actual path where the volume should be mounted inside the container
+      volumes:
+        - name: persistent-storage
+          csi:
+            driver: blob.csi.azure.com
+            readOnly: false  # Optionally, set to true if the volume should be read-only
+            volumeAttributes:
+              containerName: content
+            secretName: azure-secret
+            mountOptions:
+              - "-o allow_other"
+              - "--file-cache-timeout-in-seconds=120"
