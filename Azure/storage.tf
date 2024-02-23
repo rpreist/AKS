@@ -11,5 +11,5 @@ resource "azurerm_storage_container" "content" {
   storage_account_name = azurerm_storage_account.content.name
   name                 = "content"
   # By default, containers are private. To specify a different level of access
-  # container_access_type = "blob" # Options: "container", "blob", or "private"
+  container_access_type = "blob" # Options: "container", "blob", or "private"
 }
