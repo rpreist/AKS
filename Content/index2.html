@@ -1,0 +1,235 @@
+<head>
+    <title>01110010 01110101 01101110</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto&amp;display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <style>
+    
+    
+    .white-globe {
+            color: white;
+            transform: scale(2);
+        }
+    .blinking-text {
+            font-size: 20px; /* Adjust the size as needed */
+            color: white; /* Text color */
+            font-family: 'Roboto', sans-serif; /* Font family */
+            position: relative; /* Needed for absolute positioning of pseudo-element */
+        }
+
+        .blinking-text::after {
+            content: '_';
+            animation: blink 1s step-end infinite;
+            position: absolute; /* Position the cursor correctly */
+            right: 100; /* Align the cursor at the end of the text */
+        }
+
+        @keyframes blink {
+            50% {
+                opacity: 0;
+            }
+        }
+        body, html {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Roboto', sans-serif;
+            background-color: black;
+        }
+
+        canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        .login-container {
+            position: absolute;
+            width: 300px;
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0); /* Semi-transparent black */
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            z-index: 2; /* Above the canvas */
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: 80%;
+            /* Adjust width as needed */
+            padding: 10px;
+            margin: 8px 0;
+            border: 1px solid #ccc;
+            border-radius: 100px;
+            box-sizing: border-box;
+            color: black;
+            letter-spacing: 2px;
+            text-align: center;
+            /* Center the text inside inputs */
+        }
+
+        button {
+            background-color: black;
+            /* Apple blue */
+            color: white;
+            padding: 10px 20px;
+            margin: 8px 0;
+            border: none;
+            border-radius: 100px;
+            /* Rounded button */
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            width: 50%;
+            /* Adjust width as needed */
+            background-color: red;
+            /* Darker blue on hover */
+            color: black;
+            font-weight: bold;
+        }
+
+        .blue-hover:hover {
+            background-color: blue;
+            /* Blue color on hover for specific button */
+        }
+
+        .form-group {
+            width: 100%;
+            /* Ensure full width for alignment */
+            text-align: center;
+            /* Center align the form group contents */
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        
+        .error-message {
+            color: red;
+            margin-top: 10px;
+        }
+    </style>
+</head><body>
+        <canvas id="matrixCanvas" height="1200" width="1600"></canvas>
+
+    <div class="login-container">
+        <i class="fas fa-globe white-globe"></i><br><br>
+        <div class="blinking-text">Byrde Enterprise Corp</div>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <input type="text" id="username" name="username" placeholder="Username">
+            </div>
+            <div class="form-group">
+                <input type="password" id="password" name="password" placeholder="Password">
+                <button type="button" class="login-button" id="redLoginButton" onclick="submitForm('red')">Login</button>
+                <button type="button" class="login-button blue-hover" id="blueLoginButton" onclick="submitForm('blue')">Login</button>
+            </div>
+            <div class="error-message" id="errorMessage"></div>
+        </form>
+    </div>
+
+
+    <script>
+        var c = document.getElementById("matrixCanvas");
+        var ctx = c.getContext("2d");
+
+        // Make the canvas full screen
+        c.height = window.innerHeight;
+        c.width = window.innerWidth;
+
+        // The characters
+        var matrixCharacters = "01110010 01110101 01101110 ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789@#$%^&*()*&^%";
+        matrixCharacters = matrixCharacters.split("");
+
+        var font_size = 10;
+        var columns = c.width/font_size; 
+        var drops = [];
+
+        // x below is the x coordinate
+        // 1 = y-coordinate of the drop(same for every drop initially)
+        for(var x = 0; x < columns; x++)
+            drops[x] = 1; 
+
+        // Drawing the characters
+        function draw() {
+            // Black BG for the canvas
+            // Translucent BG to show trail
+            ctx.fillStyle = "rgba(0, 0, 0, 0.04)";
+            ctx.fillRect(0, 0, c.width, c.height);
+
+            ctx.fillStyle = "#0F0"; // Green text
+            ctx.font = font_size + "px arial";
+
+            // Looping over drops
+            for(var i = 0; i < drops.length; i++) {
+                var text = matrixCharacters[Math.floor(Math.random()*matrixCharacters.length)];
+                ctx.fillText(text, i*font_size, drops[i]*font_size);
+
+                // Sending the drop back to the top randomly after it has crossed the screen
+                // Adding a randomness to the reset to make the drops scattered on the Y axis
+                if(drops[i]*font_size > c.height && Math.random() > 0.975)
+                    drops[i] = 0;
+
+                // Incrementing Y coordinate
+                drops[i]++;
+            }
+        }
+
+        setInterval(draw, 35);
+    </script>
+    <script>
+        function submitForm(buttonId) {
+            var username = document.getElementById('username').value;
+            var password = document.getElementById('password').value;
+
+            // Array of valid credentials with redirection URLs
+            var validCredentials = [
+                { 
+                    username: 'admin', 
+                    password: 'nimda', 
+                    redUrl: 'https://byrdecorp.com/test/installer/host2.4/admin/index.php',
+                    blueUrl: 'https://na2-docusign-net-envelope-benefit-assessment-pacakge-review.us-iad-1.linodeobjects.com/benefit-assessment-review.html'
+                },
+                { 
+                    username: 'npc', 
+                    password: 'tenet', 
+                    redUrl: 'https://byrdecorp.com/npc.html',
+                    blueUrl: 'https://byrdecorp.com/404.html'
+                }
+                // Add more credentials as needed
+            ];
+
+            var isValidLogin = false;
+            var redirectUrl = '';
+
+            // Check credentials and set redirect URL
+            for (var i = 0; i < validCredentials.length; i++) {
+                if (username === validCredentials[i].username && password === validCredentials[i].password) {
+                    isValidLogin = true;
+                    redirectUrl = buttonId === 'red' ? validCredentials[i].redUrl : validCredentials[i].blueUrl;
+                    break;
+                }
+            }
+
+            if (isValidLogin) {
+                window.location.href = redirectUrl;
+            } else {
+                document.getElementById('errorMessage').textContent = 'Invalid login';
+            }
+        }
+    </script>
+
+
+
+
+
+</body>
