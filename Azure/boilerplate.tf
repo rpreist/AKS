@@ -26,10 +26,10 @@ provider "azuread" {
 }
 
 provider "github" {
-  owner = "teamdman-ca"
+  owner = "rpreist"
   # Ensure to configure authentication for GitHub Provider
   # For example, using a token
-  # token = var.github_token
+  token = var.github_token
 }
 
 # Corrected Data Source for Azure AD Client Config
